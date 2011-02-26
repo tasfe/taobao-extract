@@ -187,13 +187,16 @@ class Get_item(threading.Thread):
             except httplib.IncompleteRead:
                 self.queue_item_url.put((url, shop_id))
                 continue
-            m=re.search(r'<a target="_blank" href="http://item.taobao.com/spu_detail.htm\?spu_id=\d*?&no_switch=1&default_item_id=\d*?">(.*?)</a>', html)
+            m=re.search(r'''<a target="_blank" href="http://item.taobao.com/spu_detail.htm\?spu_id=\d*?&no_switch=1&default_item_id=\d*?">(.*?)</a>''', html)        
             if m is not None:
                 title=m.group(1)
-                print title
             else:
-                title='null'
-
+                m = re.search(r'<div class="detail-hd">\s*<h3>\s*(.*?)\s*</h3>', html)
+                if m is not None:
+                    title=m.group(1)
+                else:
+                    title='null'
+            print title
             #art.NO
             m= re.search(r'(\d{9}|\d{6}-\d{3}|\d{4,5}-\d|\d{1}-\d{6}|\d{5,6}|[A-Z]{3}\d{3}|[A-Z|\\]{1,3}\d{3,6})', title)
             if m is not None:
